@@ -5,87 +5,176 @@ from langchain_groq import ChatGroq
 # Load env
 load_dotenv()
 
-# Page setup
+# Page config
 st.set_page_config(
-    page_title="NextTrip Bot AI",
-    page_icon="🇮🇳",
-    layout="wide",
+    page_title="NextTrip Bot",
+    page_icon="✈️",
+    layout="wide"
 )
 
-# ---------------- CSS ---------------- #
+# ---------------- PREMIUM CSS ---------------- #
 st.markdown("""
 <style>
 
+/* Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* Full App */
+html, body, [class*="css"] {
+    font-family: 'Poppins', sans-serif;
+}
+
 /* Background */
 .stApp {
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, #f8fafc, #eef2ff);
     color: #111827;
 }
 
-/* Hide Streamlit branding */
+/* Hide Streamlit Branding */
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
 
-/* Main Title */
-.main-title {
-    font-size: 3.5rem;
+/* Main Container */
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* ---------- HERO SECTION ---------- */
+
+.hero {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.hero-title {
+    font-size: 4rem;
     font-weight: 800;
-    text-align: center;
-    color: #ea580c;
-    margin-top: 10px;
-    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(90deg, #ff6b00, #ff9500);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: float 3s ease-in-out infinite;
+    text-shadow: 0px 6px 20px rgba(255,140,0,0.2);
 }
 
-/* Subtitle */
-.subtitle {
-    text-align: center;
-    color: #475569;
+.hero-subtitle {
     font-size: 1.2rem;
-    margin-bottom: 30px;
+    color: #475569;
+    margin-top: 10px;
+    font-weight: 500;
 }
 
-/* Chat Box */
+/* Floating animation */
+@keyframes float {
+    0% {transform: translateY(0px);}
+    50% {transform: translateY(-6px);}
+    100% {transform: translateY(0px);}
+}
+
+/* ---------- CHAT ---------- */
+
 .stChatMessage {
-    background: white;
-    border-radius: 18px;
-    padding: 15px;
-    margin-bottom: 15px;
+    background: rgba(255,255,255,0.92);
+    border-radius: 20px;
+    padding: 18px;
+    margin-bottom: 18px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0px 2px 10px rgba(0,0,0,0.05);
-    color: #111827;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+}
+
+/* Text Fix */
+.stMarkdown,
+.stMarkdown p,
+.stChatMessage p,
+.stChatMessage div {
+    color: #111827 !important;
     font-size: 16px;
     line-height: 1.7;
 }
 
-/* Input */
-.stChatInput input {
-    background-color: white !important;
-    color: black !important;
-    border-radius: 14px !important;
-    border: 1px solid #cbd5e1 !important;
-    padding: 12px !important;
+/* User Message */
+[data-testid="chatAvatarIcon-user"] + div {
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
 }
 
-/* Sidebar */
+/* Assistant Message */
+[data-testid="chatAvatarIcon-assistant"] + div {
+    background: white;
+}
+
+/* ---------- INPUT ---------- */
+
+.stChatInput input {
+    background: white !important;
+    color: #111827 !important;
+    border-radius: 16px !important;
+    border: 1px solid #d1d5db !important;
+    padding: 14px !important;
+}
+
+/* Placeholder */
+.stChatInput input::placeholder {
+    color: #6b7280 !important;
+}
+
+/* ---------- SIDEBAR ---------- */
+
 section[data-testid="stSidebar"] {
-    background-color: white;
+    background: white;
     border-right: 1px solid #e5e7eb;
 }
 
-/* Sidebar text */
 section[data-testid="stSidebar"] * {
     color: #111827 !important;
 }
 
-/* Buttons */
-.stButton button {
-    background: linear-gradient(90deg, #f97316, #ea580c);
-    color: white;
-    border: none;
+/* Sidebar cards */
+[data-testid="stSidebar"] .stAlert {
+    background: linear-gradient(135deg, #fff7ed, #ffedd5);
     border-radius: 12px;
-    padding: 10px 18px;
+    border: none;
+}
+
+/* ---------- BUTTONS ---------- */
+
+.stButton button {
+    background: linear-gradient(90deg, #ff6b00, #ff9500);
+    color: white !important;
+    border: none;
+    border-radius: 14px;
+    padding: 12px;
     font-weight: 600;
+    width: 100%;
+    transition: 0.3s;
+}
+
+.stButton button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255,140,0,0.25);
+}
+
+/* ---------- MOBILE ---------- */
+
+@media (max-width: 768px) {
+
+    .hero-title {
+        font-size: 2.4rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+        padding: 0px 10px;
+    }
+
+    .stChatMessage {
+        padding: 14px;
+    }
+
+    .block-container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
 }
 
 /* Scrollbar */
@@ -94,44 +183,39 @@ section[data-testid="stSidebar"] * {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #f97316;
+    background: #ff9500;
     border-radius: 10px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
-# ---------------- HEADER ---------------- #
-st.markdown(
-    '<div class="main-title">NextTrip Bot</div>',
-    unsafe_allow_html=True
-)
+# ---------------- HERO ---------------- #
 
-st.markdown(
-    '<div class="subtitle">Your Smart India Travel Planner ✨</div>',
-    unsafe_allow_html=True
-)
+st.markdown("""
+<div class="hero">
+    <div class="hero-title">✈️ NextTrip Bot</div>
+    <div class="hero-subtitle">
+        Your Smart AI Travel Planner for Incredible India 🇮🇳
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # ---------------- SIDEBAR ---------------- #
+
 with st.sidebar:
 
-    st.title("🌍 Travel Features")
+    st.title("🌍 Features")
 
     st.markdown("""
-    ### ✨ AI Features
-
-    - 🕌 Tourist Attractions
+    - 🕌 Tourist Places
     - 🍴 Food Recommendations
-    - 💰 Budget Trip Planning
-    - 🗓️ One-Day Itinerary
+    - 💰 Budget Planner
+    - 🗓️ Trip Itinerary
     - 🏔️ Hill Stations
     - 🏖️ Beaches
     - 🛕 Temple Tours
-    - 🚕 Transport Guidance
-    - 🏨 Hotel Suggestions
-    - 👨‍👩‍👧 Family Trips
-    - ❤️ Couple Trips
-    - 🎒 Solo Travel Plans
+    - 🚕 Travel Guidance
     """)
 
     st.markdown("---")
@@ -139,92 +223,73 @@ with st.sidebar:
     st.subheader("💡 Try Asking")
 
     st.info("3 day Goa trip under ₹10000")
-
-    st.info("Best food places in Delhi")
-
-    st.info("2 day Ooty family trip")
-
-    st.info("Best places to visit in Kerala")
+    st.info("Best places in Kerala")
+    st.info("2 day Ooty trip")
+    st.info("Best food in Delhi")
 
 # ---------------- QUICK BUTTONS ---------------- #
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    if st.button("🏖️ Goa Trip"):
+    if st.button("🏖️ Goa"):
         st.session_state.example = "3 day Goa trip under ₹10000"
 
 with col2:
-    if st.button("🏔️ Hill Stations"):
+    if st.button("🏔️ Hills"):
         st.session_state.example = "Best hill stations in India"
 
 with col3:
-    if st.button("🍴 Food Tour"):
+    if st.button("🍴 Food"):
         st.session_state.example = "Best street foods in Delhi"
 
 with col4:
-    if st.button("🛕 Temple Tour"):
+    if st.button("🛕 Temples"):
         st.session_state.example = "South India temple trip"
 
 # ---------------- CHAT HISTORY ---------------- #
+
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# Display old messages
 for message in st.session_state.chat_history:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
 # ---------------- LLM ---------------- #
+
 llm = ChatGroq(
     model="llama-3.3-70b-versatile",
     temperature=0.3,
 )
 
 # ---------------- SYSTEM PROMPT ---------------- #
+
 SYSTEM_PROMPT = """
-You are BharatYatra AI, an expert India travel planner.
+You are NextTrip Bot, an expert India travel planner AI.
 
-You help users plan trips across India.
-
-Your expertise includes:
+Help users with:
+- Trip itineraries
 - Tourist attractions
-- Budget travel
-- Luxury travel
 - Food recommendations
-- Family trips
-- Couple trips
-- Solo trips
+- Budget planning
+- Hotels
+- Transport
 - Beaches
 - Hill stations
 - Temples
 - Adventure tourism
-- Local transport
-- Hotel recommendations
 
-Always:
-- Give detailed itineraries
-- Mention estimated budgets in INR
-- Suggest local foods
-- Recommend transport options
-- Mention best timings
-- Keep responses visually attractive
-- Use emojis moderately
-
-If user asks:
-"3 day Goa trip under ₹10000"
-
-Generate:
-- Day-wise itinerary
-- Hotel suggestions
-- Food recommendations
-- Transport suggestions
-- Budget breakdown
-- Total estimated cost
-
-Act like a professional India travel guide.
+Always provide:
+- Day-wise plans
+- Budget estimation in INR
+- Food suggestions
+- Travel guidance
+- Practical recommendations
 """
 
 # ---------------- INPUT ---------------- #
+
 default_prompt = st.session_state.get("example", "")
 
 user_prompt = st.chat_input(
@@ -242,7 +307,7 @@ if user_prompt or default_prompt:
         "content": final_prompt
     })
 
-    with st.spinner("Planning your India trip ✨"):
+    with st.spinner("Planning your trip ✨"):
 
         response = llm.invoke([
             {"role": "system", "content": SYSTEM_PROMPT},
