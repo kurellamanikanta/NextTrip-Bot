@@ -7,7 +7,7 @@ load_dotenv()
 
 # Page setup
 st.set_page_config(
-    page_title="BharatYatra AI",
+    page_title="NextTrip Bot AI",
     page_icon="🇮🇳",
     layout="wide",
 )
